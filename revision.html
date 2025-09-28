@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بطاقات قواعد العدد والمعدود</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css');
+        
+        :root {
+            --bg-gradient-start: #E0EAFC;
+            --bg-gradient-end: #CFDEF3;
+            --card-bg-color: #FFFFFF;
+            --primary-accent-color: #4A90E2;
+            --primary-accent-hover: #357ABD;
+            --text-color: #333A45;
+            --light-text-color: #555E6B;
+            --shadow-color: rgba(74, 144, 226, 0.2);
+            --separator-color: #EAEAEA;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Noto Sans Arabic', sans-serif; 
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-color); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .app-container { 
+            width: 100%; 
+            max-width: 500px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 30px;
+        }
+        
+        .flashcard-scene { 
+            width: 100%; 
+            height: calc(100vw * 0.7); 
+            max-height: 350px; 
+            perspective: 1200px; 
+            cursor: pointer; 
+        }
+        .flashcard-inner { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            transition: transform 0.7s; 
+            transform-style: preserve-3d; 
+        }
+        .flashcard-inner.is-flipped { 
+            transform: rotateY(180deg); 
+        }
+        .flashcard-face { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden; 
+            background-color: var(--card-bg-color); 
+            border-radius: 20px; 
+            box-shadow: 0 5px 15px var(--shadow-color), 0 15px 35px rgba(0,0,0,0.08);
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 25px; 
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .flashcard-front { }
+        .flashcard-back { transform: rotateY(180deg); }
+
+        .flashcard-title { 
+            font-size: clamp(2.5rem, 10vw, 4.2rem); 
+            font-weight: 700;
+            color: var(--primary-accent-color);
+        }
+        .flashcard-text { 
+            font-size: clamp(1.1rem, 4vw, 1.5rem); 
+            line-height: 1.7; 
+            color: var(--light-text-color);
+            margin-bottom: auto; /* يدفع النص الرئيسي للأعلى */
+        }
+        .flashcard-text b {
+            color: var(--primary-accent-color);
+            font-weight: 700;
+        }
+        
+        /* --- تصميم الملحوظة الجديدة --- */
+        .card-note {
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            font-style: italic;
+            color: var(--light-text-color);
+            margin-top: 15px; /* مسافة بين النص الرئيسي والملحوظة */
+            padding-top: 15px;
+            border-top: 2px solid var(--separator-color);
+            width: 90%;
+            margin-bottom: 10px; /* يدفع الملحوظة للأعلى قليلاً */
+        }
+
+        .navigation-wrapper { 
+            display: flex; 
+            justify-content: center;
+            align-items: center; 
+            width: 100%; 
+        }
+        .nav-button { 
+            background-color: var(--primary-accent-color); 
+            color: var(--card-bg-color); 
+            border: none; 
+            width: 75px; 
+            height: 75px; 
+            border-radius: 50%; 
+            font-size: 2rem; 
+            cursor: pointer; 
+            transition: all 0.2s ease-in-out; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.4);
+        }
+        .nav-button:hover, .nav-button:focus { 
+            background-color: var(--primary-accent-hover); 
+            transform: translateY(-4px) scale(1.05); 
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.5);
+            outline: none;
+        }
+
+        .progress-indicator { 
+            font-size: 1.1rem; 
+            font-weight: 400; 
+            color: var(--text-color);
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 8px 25px;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="flashcard-scene" id="flashcard-scene">
+            <div class="flashcard-inner" id="flashcard-inner">
+                <div class="flashcard-face flashcard-front" id="flashcard-front">
+                    <span class="flashcard-title"></span>
+                </div>
+                <div class="flashcard-face flashcard-back" id="flashcard-back">
+                    <p class="flashcard-text"></p>
+                    <p class="card-note"></p>
+                </div>
+            </div>
+        </div>
+        <div class="progress-indicator" id="progress-indicator"></div>
+        <div class="navigation-wrapper">
+            <button class="nav-button" id="next-btn" aria-label="التالي">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+    </div>
+    <script>
+    // ========================================================================
+    // ==                      قسم البيانات (المحتوى)                       ==
+    // ========================================================================
+    const flashcardsData = [
+      { 
+        id: 1, 
+        front: 'العددان ١ - ٢', 
+        back: 'القاعدة: يوافق المعدود في التذكير والتأنيث.<br><br><b>مثال:</b> جاء طالبٌ <b>واحدٌ</b>.',
+        note: 'العددان ١ و ٢ لا تمييز لهما، ويعرب العدد نعتًا.'
+      },
+      { 
+        id: 2, 
+        front: 'الأعداد ٣ - ١٠', 
+        back: 'القاعدة: يخالف المعدود في التذكير والتأنيث.<br><br><b>مثال:</b> قرأتُ <b>ثلاثةَ</b> كتبٍ.',
+        note: 'ملحوظة التمييز: جمع مجرور بالإضافة.'
+      },
+      { 
+        id: 3, 
+        front: 'العددان ١١ - ١٢', 
+        back: 'القاعدة: الجزآن يوافقان المعدود.<br><br><b>مثال:</b> رأيتُ <b>أحدَ عشرَ</b> كوكبًا.',
+        note: 'ملحوظة التمييز: مفرد منصوب.'
+      },
+      { 
+        id: 4, 
+        front: 'الأعداد ١٣ - ١٩', 
+        back: 'الجزء الأول يخالف المعدود، والجزء الثاني يوافقه.<br><br><b>مثال:</b> نجحَ <b>أربعةَ عشرَ</b> طالبًا.',
+        note: 'ملحوظة التمييز: مفرد منصوب.'
+      }
+    ];
+    // ========================================================================
+    // ==                  لا تقم بتعديل أي شيء تحت هذا الخط                 ==
+    // ========================================================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const cardFront = document.getElementById('flashcard-front');
+        const cardBack = document.getElementById('flashcard-back');
+        const nextBtn = document.getElementById('next-btn');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const flashcardInner = document.getElementById('flashcard-inner');
+        const flashcardScene = document.getElementById('flashcard-scene');
+
+        const appState = {
+            currentIndex: 0,
+            totalCards: flashcardsData.length
+        };
+
+        function displayCard() {
+            if (appState.totalCards === 0) {
+                progressIndicator.textContent = "لا توجد بطاقات";
+                cardBack.querySelector('.flashcard-text').textContent = "أضف بيانات";
+                return;
+            }
+
+            const currentCardData = flashcardsData[appState.currentIndex];
+            
+            cardFront.querySelector('.flashcard-title').textContent = currentCardData.front;
+            cardBack.querySelector('.flashcard-text').innerHTML = currentCardData.back;
+            cardBack.querySelector('.card-note').textContent = currentCardData.note; // إضافة الملحوظة
+            
+            progressIndicator.textContent = `${appState.currentIndex + 1} / ${appState.totalCards}`;
+            
+            // التأكد من أن البطاقة تبدأ دائمًا من الوجه الأمامي
+            setTimeout(() => {
+                flashcardInner.classList.remove('is-flipped');
+            }, 100);
+        }
+        
+        function showNextCard() {
+            appState.currentIndex = (appState.currentIndex + 1) % appState.totalCards;
+            displayCard();
+        }
+
+        function flipCard() {
+            flashcardInner.classList.toggle('is-flipped');
+        }
+
+        nextBtn.addEventListener('click', showNextCard);
+        flashcardScene.addEventListener('click', flipCard);
+
+        displayCard();
+    });
+    </script>
+</body>
+</html>
