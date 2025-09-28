@@ -3,198 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بطاقات مصورة بسيطة</title>
+    <title>بطاقات المفردات التعليمية</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f4f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            padding: 20px;
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css');
+        :root {
+            --bg-color: #F4F6F7;
+            --card-bg-color: #FFFFFF;
+            --primary-accent-color: #3498DB;
+            --text-color: #2C3E50;
         }
-        .flashcard-container {
-            width: 300px;
-            height: 400px;
-            perspective: 1000px;
-            margin: 15px;
-        }
-        .flashcard {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            cursor: pointer;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-            border-radius: 10px;
-        }
-        /* إزالة التحويم لتقليب البطاقة */
-        /* .flashcard-container:hover .flashcard {
-            transform: rotateY(180deg);
-        } */
-
-        /* فئة جديدة للتقليب عند النقر */
-        .flashcard.is-flipped {
-            transform: rotateY(180deg);
-        }
-
-        .front, .back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        .front {
-            background-color: #ffffff;
-        }
-        .back {
-            background-color: #4a90e2;
-            color: white;
-            transform: rotateY(180deg);
-            padding: 20px;
-        }
-        .front img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-        .back h2 {
-            margin: 0;
-            font-size: 3em;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .app-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .flashcard-scene { width: 100%; height: calc(100vw * 0.7); max-height: 350px; perspective: 1000px; cursor: pointer; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard-inner.is-flipped { transform: rotateY(180deg); }
+        .flashcard-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; background-color: var(--card-bg-color); border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .flashcard-front { }
+        .flashcard-back { transform: rotateY(180deg); }
+        .flashcard-image { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 5px; }
+        .flashcard-word { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 700; }
+        .navigation-wrapper { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; }
+        .nav-button { background-color: var(--primary-accent-color); color: var(--card-bg-color); border: none; width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: background-color 0.2s, transform 0.2s; display: flex; align-items: center; justify-content: center; }
+        .nav-button:hover { background-color: #2980b9; transform: scale(1.05); }
+        .progress-indicator { font-size: 1.2rem; font-weight: 700; color: #7f8c8d; }
     </style>
 </head>
 <body>
-
-    <!-- البطاقة الأولى: الضغط -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/pressure.jpg" alt="صورة عن قياس الضغط">
-            </div>
-            <div class="back">
-                <h2>الضغط</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- البطاقة الثانية: الضغط مرتفع -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/high-pressure.jpg" alt="صورة عن ارتفاع ضغط الدم">
-            </div>
-            <div class="back">
-                <h2>الضغط مرتفع</h2>
+    <div class="app-container">
+        <div class="flashcard-scene" id="flashcard-scene">
+            <div class="flashcard-inner" id="flashcard-inner">
+                <div class="flashcard-face flashcard-front" id="flashcard-front">
+                    <img src="" alt="صورة البطاقة" class="flashcard-image">
+                </div>
+                <div class="flashcard-face flashcard-back" id="flashcard-back">
+                    <span class="flashcard-word"></span>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!-- البطاقة الثالثة: مرتفع -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/high.jpg" alt="صورة سهم للأعلى">
-            </div>
-            <div class="back">
-                <h2>مرتفع</h2>
-            </div>
+        <div class="navigation-wrapper">
+            <button class="nav-button" id="next-btn" aria-label="التالي">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="progress-indicator" id="progress-indicator"></div>
+            <button class="nav-button" id="prev-btn" aria-label="السابق">
+                <i class="fas fa-arrow-right"></i>
+            </button>
         </div>
     </div>
-
-    <!-- البطاقة الرابعة: منخفض -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/low.jpg" alt="صورة سهم للأسفل">
-            </div>
-            <div class="back">
-                <h2>منخفض</h2>
-            </div>
-        </div>
-    </div>
-    
-    <!-- البطاقة الخامسة: السكري -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/diabetes.jpg" alt="صورة عن مرض السكري">
-            </div>
-            <div class="back">
-                <h2>السكري</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- البطاقة السادسة: الدواء -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/medicine.jpg" alt="صورة أدوية">
-            </div>
-            <div class="back">
-                <h2>الدواء</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- البطاقة السابعة: الحمية -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/diet.jpg" alt="صورة طعام صحي">
-            </div>
-            <div class="back">
-                <h2>الحمية</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- البطاقة الثامنة: النشويات -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/carbohydrates.jpg" alt="صورة خبز وأرز">
-            </div>
-            <div class="back">
-                <h2>النشويات</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- البطاقة التاسعة: السكريات -->
-    <div class="flashcard-container">
-        <div class="flashcard">
-            <div class="front">
-                <img src="images/sugars.jpg" alt="صورة فواكه وحلويات">
-            </div>
-            <div class="back">
-                <h2>السكريات</h2>
-            </div>
-        </div>
-    </div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // الحصول على جميع عناصر البطاقات
-            const flashcards = document.querySelectorAll('.flashcard');
+    // ========================================================================
+    // ==                      قسم البيانات (المحتوى)                       ==
+    // ========================================================================
+    const flashcardsData = [
+      { id: 1, word: 'الضغط', image: 'images/pressure.jpg' },
+      { id: 2, word: 'الضغط مرتفع', image: 'images/high-pressure.jpg' },
+      { id: 3, word: 'مرتفع', image: 'images/high.jpg' },
+      { id: 4, word: 'منخفض', image: 'images/low.jpg' },
+      { id: 5, word: 'السكري', image: 'images/diabetes.jpg' },
+      { id: 6, word: 'النشويات', image: 'images/carbohydrates.jpg' },
+      { id: 7, word: 'السكريات', image: 'images/sugars.jpg' },
+      { id: 8, word: 'الحمية', image: 'images/diet.jpg' },
+      { id: 9, word: 'الدواء', image: 'images/medicine.jpg' }
+    ];
+    // ========================================================================
+    // ==                  لا تقم بتعديل أي شيء تحت هذا الخط                 ==
+    // ========================================================================
 
-            // إضافة مستمع حدث النقر لكل بطاقة
-            flashcards.forEach(card => {
-                card.addEventListener('click', function() {
-                    this.classList.toggle('is-flipped'); // تبديل فئة 'is-flipped' عند النقر
-                });
+    document.addEventListener('DOMContentLoaded', () => {
+        const cardFront = document.getElementById('flashcard-front');
+        const cardBack = document.getElementById('flashcard-back');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const flashcardInner = document.getElementById('flashcard-inner');
+        const flashcardScene = document.getElementById('flashcard-scene');
+
+        const appState = {
+            currentIndex: 0,
+            totalCards: flashcardsData.length
+        };
+        
+        function preloadImages() {
+            flashcardsData.forEach(card => {
+                const img = new Image();
+                img.src = card.image;
             });
-        });
-    </script>
+        }
 
+        function displayCard() {
+            if (appState.totalCards === 0) {
+                progressIndicator.textContent = "لا توجد بطاقات";
+                cardBack.querySelector('.flashcard-word').textContent = "أضف بيانات";
+                return;
+            }
+
+            const currentCardData = flashcardsData[appState.currentIndex];
+            
+            cardFront.querySelector('.flashcard-image').src = currentCardData.image;
+            cardFront.querySelector('.flashcard-image').alt = currentCardData.word;
+            cardBack.querySelector('.flashcard-word').textContent = currentCardData.word;
+            
+            progressIndicator.textContent = `البطاقة ${appState.currentIndex + 1} من ${appState.totalCards}`;
+            
+            flashcardInner.classList.remove('is-flipped');
+        }
+        
+        function showNextCard() {
+            appState.currentIndex = (appState.currentIndex + 1) % appState.totalCards;
+            displayCard();
+        }
+        
+        function showPrevCard() {
+            appState.currentIndex = (appState.currentIndex - 1 + appState.totalCards) % appState.totalCards;
+            displayCard();
+        }
+
+        function flipCard() {
+            flashcardInner.classList.toggle('is-flipped');
+        }
+
+        nextBtn.addEventListener('click', showNextCard);
+        prevBtn.addEventListener('click', showPrevCard);
+        flashcardScene.addEventListener('click', flipCard);
+
+        preloadImages();
+        displayCard();
+    });
+    </script>
 </body>
 </html>
