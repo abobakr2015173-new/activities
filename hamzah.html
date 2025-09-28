@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة: صوّب الهمزة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 450px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .game-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: right;
+        }
+        .score-board {
+            font-size: 22px;
+            font-weight: bold;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            min-width: 80px;
+        }
+        .score-board span { color: #007bff; font-size: 26px; }
+        .word-container {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            min-height: 130px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .word-display {
+            font-size: 72px;
+            font-weight: bold;
+            color: #2c3e50;
+            transition: color 0.5s ease;
+        }
+        .corrected-word-color {
+            color: #007bff !important;
+        }
+        .end-message h2 {
+            font-size: 72px; color: #2c3e50; margin: 0;
+        }
+        .end-message p {
+            font-size: 24px; color: #28a745; font-weight: bold;
+        }
+        .end-message .percentage {
+            font-size: 22px; color: #007bff; font-weight: bold; margin-top: 15px;
+        }
+        .choices-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+        }
+        .choice-button {
+            flex: 1; padding: 15px; border-radius: 15px; cursor: pointer; border: 1px solid #e0e0e0;
+            background-color: #ffffff; color: #495057; font-size: 24px; font-weight: bold; transition: all 0.3s ease;
+        }
+        .choice-button span {
+            display: block; font-size: 20px; margin-top: 5px;
+        }
+        .correct-choice {
+            background-color: #d4edda !important; border-color: #28a745 !important; color: #28a745 !important;
+        }
+        .wrong-choice {
+            background-color: #f8d7da !important; border-color: #dc3545 !important; color: #dc3545 !important;
+        }
+        .action-button {
+            width: 100%; padding: 15px; margin-top: 20px; font-size: 22px; font-weight: bold;
+            cursor: pointer; border-radius: 15px; border: none; color: white;
+        }
+        #next-button {
+            background-color: #007bff; display: none;
+        }
+        #replay-button {
+            background-color: #28a745; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div class="header">
+            <div class="game-title">لعبة: صوّب<br>الهمزة</div>
+            <div class="score-board">النقاط:<br><span id="score">0</span></div>
+        </div>
+        
+        <div class="word-container" id="word-container">
+            <div class="word-display" id="word-display"></div>
+        </div>
+
+        <div class="choices-container" id="choices-container">
+            <div class="choice-button" id="qat-choice" onclick="makeChoice('qat', this)">
+                همزة قطع
+                <span>(أ ، إ)</span>
+            </div>
+            <div class="choice-button" id="wasl-choice" onclick="makeChoice('wasl', this)">
+                همزة وصل
+                <span>(ا)</span>
+            </div>
+        </div>
+
+        <button class="action-button" id="next-button" onclick="loadWord()">التالي</button>
+        <button class="action-button" id="replay-button" onclick="startGame()">إعادة اللعب</button>
+    </div>
+
+    <script>
+        const wordBank = [
+            { displayed: 'ابن', correct: 'ابن', type: 'wasl' }, { displayed: 'احمد', correct: 'أحمد', type: 'qat' },
+            { displayed: 'اسم', correct: 'اسم', type: 'wasl' }, { displayed: 'اسلام', correct: 'إسلام', type: 'qat' },
+            { displayed: 'استمع', correct: 'استمع', type: 'wasl' }, { displayed: 'اكل', correct: 'أكل', type: 'qat' },
+            { displayed: 'انطلق', correct: 'انطلق', type: 'wasl' }, { displayed: 'ارسل', correct: 'أرسل', type: 'qat' },
+            { displayed: 'اجتمع', correct: 'اجتمع', type: 'wasl' }, { displayed: 'احسن', correct: 'أحسن', type: 'qat' },
+            { displayed: 'اقتصاد', correct: 'اقتصاد', type: 'wasl' }, { displayed: 'اكرام', correct: 'إكرام', type: 'qat' },
+            { displayed: 'اشارة', correct: 'إشارة', type: 'qat' }, { displayed: 'اسامة', correct: 'أسامة', type: 'qat' },
+            { displayed: 'ايمان', correct: 'إيمان', type: 'qat' }, { displayed: 'اخذ', correct: 'أخذ', type: 'qat' },
+            { displayed: 'امر', correct: 'أمر', type: 'qat' }, { displayed: 'انت', correct: 'أنت', type: 'qat' },
+            { displayed: 'انا', correct: 'أنا', type: 'qat' }, { displayed: 'الى', correct: 'إلى', type: 'qat' }
+        ];
+
+        let gameWords = [];
+        let currentWordIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let canClick = true; 
+
+        const wordDisplay = document.getElementById('word-display');
+        const scoreBoard = document.getElementById('score');
+        const waslButton = document.getElementById('wasl-choice');
+        const qatButton = document.getElementById('qat-choice');
+        const nextButton = document.getElementById('next-button');
+        const replayButton = document.getElementById('replay-button');
+        const choicesContainer = document.getElementById('choices-container');
+        const wordContainer = document.getElementById('word-container');
+        
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+        
+        function startGame() {
+            // **THE FIX IS HERE: Shuffle and slice every time the game starts**
+            const shuffledBank = shuffle([...wordBank]);
+            gameWords = shuffledBank.slice(0, 10);
+            
+            currentWordIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            scoreBoard.textContent = score;
+            
+            replayButton.style.display = 'none';
+            loadWord();
+        }
+
+        function loadWord() {
+            if (currentWordIndex >= gameWords.length) {
+                endGame();
+                return;
+            }
+            canClick = true;
+            waslButton.className = 'choice-button';
+            qatButton.className = 'choice-button';
+            choicesContainer.style.display = 'flex';
+            nextButton.style.display = 'none';
+            
+            if (!document.getElementById('word-display')) {
+                 wordContainer.innerHTML = '<div class="word-display" id="word-display"></div>';
+                 wordDisplay = document.getElementById('word-display');
+            }
+            
+            wordDisplay.className = 'word-display'; 
+            wordDisplay.textContent = gameWords[currentWordIndex].displayed;
+        }
+
+        function makeChoice(choice, buttonElement) {
+            if (!canClick) return;
+            canClick = false;
+
+            const currentWord = gameWords[currentWordIndex];
+            
+            wordDisplay.textContent = currentWord.correct;
+            wordDisplay.classList.add('corrected-word-color');
+
+            if (choice === currentWord.type) {
+                score += 10;
+                correctAnswers++;
+                buttonElement.classList.add('correct-choice');
+            } else {
+                buttonElement.classList.add('wrong-choice');
+            }
+            
+            scoreBoard.textContent = score;
+            currentWordIndex++;
+            nextButton.style.display = 'block';
+        }
+        
+        function endGame() {
+            const percentage = Math.round((correctAnswers / gameWords.length) * 100);
+            choicesContainer.style.display = 'none';
+            nextButton.style.display = 'none';
+            replayButton.style.display = 'block';
+            
+            wordContainer.innerHTML = `
+                <div class="end-message">
+                    <h2>ممتاز!</h2>
+                    <p>أحسنت! لقد أنهيت اللعبة.</p>
+                    <div class="percentage">النتيجة: ${percentage}%</div>
+                </div>
+            `;
+        }
+        
+        startGame();
+    </script>
+
+</body>
+</html>
