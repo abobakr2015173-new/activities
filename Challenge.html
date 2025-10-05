@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي القدرات اللفظية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        
+        :root {
+            --primary-color: #6a5acd;
+            --background-gradient: linear-gradient(135deg, #74EBD5 0%, #9FACE6 100%);
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --gold: #ffc107;
+            --silver: #ced4da;
+            --bronze: #cd7f32;
+            --green: #28a745;
+            --red: #dc3545;
+            --blue: #0d6efd;
+            --dark-slate: #343a40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--background-gradient);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: var(--container-bg);
+            border-radius: 24px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            font-weight: 900;
+        }
+        
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(106, 90, 205, 0.2);
+            outline: none;
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        
+        .btn-add {
+            background: var(--primary-color);
+            color: white;
+            padding: 0 25px;
+        }
+        
+        .btn-add:hover { background: #5a4acd; }
+        
+        .btn-main {
+            width: 100%;
+            background: var(--green);
+            color: white;
+            padding: 18px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .btn-main:disabled { background: #ccc; cursor: not-allowed; }
+        
+        .players-box {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 12px;
+            min-height: 70px;
+        }
+
+        .player-tag {
+            display: inline-flex;
+            align-items: center;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-weight: 700;
+        }
+
+        .player-tag .remove-btn {
+            background: rgba(0,0,0,0.2);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            cursor: pointer;
+            line-height: 20px;
+            text-align: center;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        /* Scoreboard Styling */
+        .scoreboard-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .score-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 16px;
+            font-size: 1.2em;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        /* Winner styles */
+        .score-row.rank-1 { background: var(--gold); color: #333; }
+        .score-row.rank-2 { background: var(--silver); color: #333; }
+        .score-row.rank-3 { background: var(--bronze); color: white; }
+        .score-row.rank-3 .player-name, .score-row.rank-3 .score-display { color: white; }
+        
+        .player-name {
+            flex-grow: 1;
+            text-align: right;
+            color: #333;
+        }
+        
+        .score-display {
+            background: var(--blue);
+            color: white;
+            min-width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 1.1em;
+            font-weight: 900;
+        }
+        
+        .btn-score {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            line-height: 50px;
+            padding: 0;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .btn-score:active { transform: scale(0.9); box-shadow: none; }
+        
+        .btn-plus { background: var(--green); }
+        .btn-minus { background: var(--red); }
+        
+        .actions-footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .actions-footer button {
+            padding: 20px;
+            font-size: 1.1em;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .actions-footer button:active { transform: scale(0.95); box-shadow: none; }
+        
+        .btn-winner { background: var(--gold); color: var(--text-color); }
+        .btn-reset { background: var(--dark-slate); color: white; }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Screen 1: Add Players -->
+        <div id="setupScreen" class="screen">
+            <h1>🏆 تحدي القدرات اللفظية</h1>
+            <h2>إعداد اللعبة</h2>
+            <div class="input-group">
+                <input type="text" id="nameInput" placeholder="اسم المتسابق أو المجموعة">
+                <button class="btn-add" onclick="addPlayer()">أضف</button>
+            </div>
+            
+            <div class="players-box" id="playersSetupBox"></div>
+
+            <button class="btn-main" id="startGameBtn" onclick="startGame()" disabled>بدء التسجيل ▶️</button>
+        </div>
+
+        <!-- Screen 2: Scoreboard -->
+        <div id="gameScreen" class="screen">
+            <h1>🏆 تحدي القدرات اللفظية</h1>
+            <h2>سجل النقاط</h2>
+            <div class="scoreboard-area" id="scoreboardArea"></div>
+            
+            <div class="actions-footer">
+                 <button class="btn-winner" onclick="declareWinners()">إعلان الفائزين 🥇</button>
+                 <button class="btn-reset" onclick="resetGame()">لعبة جديدة 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let isSorted = false;
+
+        const setupScreen = document.getElementById('setupScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const nameInput = document.getElementById('nameInput');
+        const playersSetupBox = document.getElementById('playersSetupBox');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const scoreboardArea = document.getElementById('scoreboardArea');
+        
+        document.addEventListener('DOMContentLoaded', loadState);
+        nameInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') addPlayer();
+        });
+
+        function saveState() {
+            localStorage.setItem('verbalChallengePlayers', JSON.stringify(players));
+        }
+
+        function loadState() {
+            const savedPlayers = localStorage.getItem('verbalChallengePlayers');
+            if (savedPlayers && JSON.parse(savedPlayers).length > 0) {
+                players = JSON.parse(savedPlayers);
+                isSorted = false;
+                renderScoreboard();
+                showScreen(gameScreen);
+            } else {
+                renderSetupList();
+                showScreen(setupScreen);
+            }
+        }
+
+        function showScreen(screenToShow) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            screenToShow.classList.add('active');
+        }
+
+        function addPlayer() {
+            const name = nameInput.value.trim();
+            if (!name) return;
+            if (players.some(p => p.name === name)) {
+                alert('هذا الاسم موجود بالفعل.');
+                return;
+            }
+            players.push({ name: name, score: 0 });
+            nameInput.value = '';
+            nameInput.focus();
+            renderSetupList();
+            saveState();
+        }
+        
+        function removePlayer(nameToRemove) {
+            players = players.filter(p => p.name !== nameToRemove);
+            renderSetupList();
+            saveState();
+        }
+        
+        function renderSetupList() {
+            if (players.length === 0) {
+                playersSetupBox.innerHTML = '<p style="text-align: center; color: #999;">أضف متسابقين لبدء اللعبة...</p>';
+                startGameBtn.disabled = true;
+            } else {
+                playersSetupBox.innerHTML = players.map(p => 
+                    `<span class="player-tag"><button class="remove-btn" onclick="removePlayer('${p.name}')">✕</button>${p.name}</span>`
+                ).join('');
+                startGameBtn.disabled = false;
+            }
+        }
+        
+        function startGame() {
+            isSorted = false;
+            renderScoreboard();
+            showScreen(gameScreen);
+        }
+        
+        function renderScoreboard() {
+            const playersToRender = isSorted ? [...players].sort((a, b) => b.score - a.score) : players;
+            
+            const ranks = {};
+            let currentRank = 0;
+            let lastScore = -1;
+            [...players].sort((a, b) => b.score - a.score).forEach((p, index) => {
+                if (p.score !== lastScore) {
+                    currentRank = index + 1;
+                    lastScore = p.score;
+                }
+                ranks[p.name] = currentRank;
+            });
+
+            scoreboardArea.innerHTML = playersToRender.map(player => {
+                const rank = ranks[player.name];
+                const rankClass = isSorted ? getRankClass(rank) : '';
+                return `
+                    <div class="score-row ${rankClass}">
+                        <span class="player-name">${player.name}</span>
+                        <span class="score-display">${player.score}</span>
+                        <button class="btn-score btn-plus" onclick="updateScore('${player.name}', 1)">+</button>
+                        <button class="btn-score btn-minus" onclick="updateScore('${player.name}', -1)">-</button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateScore(nameToUpdate, amount) {
+            const player = players.find(p => p.name === nameToUpdate);
+            if (player) {
+                player.score += amount;
+                if (player.score < 0) player.score = 0;
+                
+                if (isSorted) {
+                    renderScoreboard();
+                } else {
+                    const allRows = scoreboardArea.querySelectorAll('.score-row');
+                    allRows.forEach(row => {
+                        if (row.querySelector('.player-name').textContent === nameToUpdate) {
+                            row.querySelector('.score-display').textContent = player.score;
+                        }
+                    });
+                }
+                saveState();
+            }
+        }
+
+        function declareWinners() {
+            isSorted = true;
+            renderScoreboard();
+        }
+
+        function getRankClass(rank) {
+            if (rank === 1) return 'rank-1';
+            if (rank === 2) return 'rank-2';
+            if (rank === 3) return 'rank-3';
+            return '';
+        }
+        
+        function resetGame() {
+            if (confirm('هل أنت متأكد؟ سيتم حذف جميع المتسابقين والنقاط وبدء لعبة جديدة.')) {
+                players = [];
+                isSorted = false;
+                localStorage.removeItem('verbalChallengePlayers');
+                renderSetupList();
+                showScreen(setupScreen);
+            }
+        }
+    </script>
+</body>
+</html>
