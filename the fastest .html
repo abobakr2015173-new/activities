@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة المسابقات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .role-btn {
+            width: 100%;
+            padding: 25px;
+            font-size: 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .supervisor-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .player-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .btn-start {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            padding: 20px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .btn-start:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .players-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            min-height: 100px;
+        }
+
+        .player-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .player-tag button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .game-area {
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .buzzer-list-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 120px;
+        }
+
+        .buzzer-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .buzzer-item.winner {
+            background: #ffd700;
+            font-weight: bold;
+            font-size: 18px;
+            border: 3px solid #f39c12;
+        }
+
+        .judge-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .judge-buttons button {
+            flex: 1;
+            padding: 20px;
+            font-size: 18px;
+        }
+
+        .btn-correct {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-wrong {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .scoreboard-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .score-num {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .btn-reset {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            padding: 18px;
+            margin-top: 15px;
+        }
+
+        .btn-back {
+            width: 100%;
+            background: #95a5a6;
+            color: white;
+            margin-top: 15px;
+        }
+
+        .big-buzzer {
+            width: 280px;
+            height: 280px;
+            max-width: 85vw;
+            max-height: 85vw;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ff6b6b, #ee5a6f);
+            border: 10px solid #fff;
+            box-shadow: 0 15px 40px rgba(238, 90, 111, 0.6);
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            margin: 30px auto;
+            display: block;
+        }
+
+        .big-buzzer:active {
+            transform: scale(0.9);
+        }
+
+        .big-buzzer:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .status-msg {
+            background: #e8eaf6;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .status-msg.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-msg.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 لعبة المسابقات</h1>
+
+        <!-- 1. اختيار الدور -->
+        <div id="screen1" class="screen active">
+            <h2 style="text-align: center;">اختر دورك</h2>
+            <button class="role-btn supervisor-btn" onclick="showScreen(2)">👨‍🏫 أنا المشرف</button>
+            <button class="role-btn player-btn" onclick="showScreen(4)">👤 أنا متسابق</button>
+        </div>
+
+        <!-- 2. المشرف: إضافة المتسابقين -->
+        <div id="screen2" class="screen">
+            <h2>👨‍🏫 إضافة المتسابقين</h2>
+            <input type="text" id="nameInput" placeholder="اسم المتسابق" onkeypress="if(event.key==='Enter') addPlayerNow()">
+            <button class="btn-add" onclick="addPlayerNow()">إضافة متسابق</button>
+            
+            <div class="players-box" id="playersBox">
+                <p style="text-align: center; color: #999;">لم يتم إضافة متسابقين بعد</p>
+            </div>
+
+            <button class="btn-start" id="btnStart" onclick="startGameNow()" disabled>▶️ ابدأ اللعبة (يجب إضافة 2 على الأقل)</button>
+            <button class="btn-back" onclick="showScreen(1)">رجوع</button>
+        </div>
+
+        <!-- 3. المشرف: شاشة اللعب -->
+        <div id="screen3" class="screen">
+            <h2>🎮 التحكم باللعبة</h2>
+            <textarea id="questionBox" placeholder="اكتب السؤال هنا للتذكير (اختياري)"></textarea>
+
+            <div class="buzzer-list-box" id="buzzerBox">
+                <h3 style="color: #667eea; text-align: center; margin-bottom: 15px;">🔔 المتسابقون الذين ضغطوا</h3>
+                <p style="text-align: center; color: #999;">في انتظار الضغط على الزر...</p>
+            </div>
+
+            <div id="judgeArea" style="display: none;">
+                <div class="judge-buttons">
+                    <button class="btn-correct" onclick="correctAnswer()">✅ صحيح</button>
+                    <button class="btn-wrong" onclick="wrongAnswer()">❌ خطأ</button>
+                </div>
+            </div>
+
+            <div class="scoreboard-box">
+                <h3 style="color: #667eea; text-align: center; margin-bottom: 15px;">🏆 النقاط</h3>
+                <div id="scoresBox"></div>
+            </div>
+
+            <button class="btn-reset" onclick="newRound()">🔄 جولة جديدة</button>
+            <button class="btn-back" onclick="showScreen(1)">إنهاء وخروج</button>
+        </div>
+
+        <!-- 4. المتسابق: تسجيل الدخول -->
+        <div id="screen4" class="screen">
+            <h2>👤 تسجيل الدخول</h2>
+            <input type="text" id="loginInput" placeholder="أدخل اسمك" onkeypress="if(event.key==='Enter') loginNow()">
+            <button class="btn-add" onclick="loginNow()">دخول</button>
+            <button class="btn-back" onclick="showScreen(1)">رجوع</button>
+        </div>
+
+        <!-- 5. المتسابق: شاشة اللعب -->
+        <div id="screen5" class="screen">
+            <h2 id="playerTitle">👤 مرحباً</h2>
+            <div class="status-msg" id="playerStatus">انتظر السؤال من المشرف...</div>
+
+            <button class="big-buzzer" id="bigBuzzer" onclick="buzzNow()">اضغط للإجابة! 🔔</button>
+
+            <div class="scoreboard-box">
+                <h3 style="color: #667eea; text-align: center; margin-bottom: 15px;">🏆 نقاطك</h3>
+                <div class="score-row">
+                    <span id="myNameDisplay"></span>
+                    <span class="score-num" id="myScoreDisplay">0</span>
+                </div>
+            </div>
+
+            <button class="btn-back" onclick="showScreen(1)">خروج</button>
+        </div>
+    </div>
+
+    <script>
+        let allPlayers = [];
+        let allScores = {};
+        let pressedQueue = [];
+        let isGameOn = false;
+        let loggedName = '';
+
+        function showScreen(num) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen' + num).classList.add('active');
+        }
+
+        // إضافة متسابق
+        function addPlayerNow() {
+            const inp = document.getElementById('nameInput');
+            const name = inp.value.trim();
+            
+            if (!name) {
+                alert('⚠️ اكتب اسم المتسابق');
+                return;
+            }
+            
+            if (allPlayers.includes(name)) {
+                alert('⚠️ هذا الاسم موجود');
+                return;
+            }
+            
+            allPlayers.push(name);
+            allScores[name] = 0;
+            inp.value = '';
+            refreshPlayersList();
+        }
+
+        function refreshPlayersList() {
+            const box = document.getElementById('playersBox');
+            if (allPlayers.length === 0) {
+                box.innerHTML = '<p style="text-align: center; color: #999;">لم يتم إضافة متسابقين بعد</p>';
+            } else {
+                box.innerHTML = allPlayers.map(p => 
+                    `<span class="player-tag">${p} <button onclick="removePl('${p}')">✕</button></span>`
+                ).join('');
+            }
+            
+            // تفعيل/تعطيل زر البدء
+            const btn = document.getElementById('btnStart');
+            if (allPlayers.length >= 2) {
+                btn.disabled = false;
+                btn.textContent = `▶️ ابدأ اللعبة (${allPlayers.length} متسابقين)`;
+            } else {
+                btn.disabled = true;
+                btn.textContent = '▶️ ابدأ اللعبة (يجب إضافة 2 على الأقل)';
+            }
+        }
+
+        function removePl(name) {
+            allPlayers = allPlayers.filter(p => p !== name);
+            delete allScores[name];
+            refreshPlayersList();
+        }
+
+        // بدء اللعبة
+        function startGameNow() {
+            if (allPlayers.length < 2) {
+                alert('⚠️ أضف متسابقين على الأقل 2');
+                return;
+            }
+            isGameOn = true;
+            showScreen(3);
+            refreshScores();
+        }
+
+        // تحديث قائمة الضاغطين
+        function refreshBuzzerList() {
+            const box = document.getElementById('buzzerBox');
+            if (pressedQueue.length === 0) {
+                box.innerHTML = '<h3 style="color: #667eea; text-align: center; margin-bottom: 15px;">🔔 المتسابقون الذين ضغطوا</h3><p style="text-align: center; color: #999;">في انتظار الضغط على الزر...</p>';
+                document.getElementById('judgeArea').style.display = 'none';
+            } else {
+                box.innerHTML = '<h3 style="color: #667eea; text-align: center; margin-bottom: 15px;">🔔 المتسابقون الذين ضغطوا</h3>' +
+                    pressedQueue.map((item, i) => 
+                        `<div class="buzzer-item ${i === 0 ? 'winner' : ''}">${i === 0 ? '🏆 ' : (i+1) + '. '}${item.name} - ${item.time}</div>`
+                    ).join('');
+                document.getElementById('judgeArea').style.display = 'block';
+            }
+        }
+
+        // حكم صحيح
+        function correctAnswer() {
+            if (pressedQueue.length === 0) return;
+            const winner = pressedQueue[0].name;
+            allScores[winner]++;
+            alert(`✅ ${winner} أجاب بشكل صحيح!`);
+            refreshScores();
+            newRound();
+        }
+
+        // حكم خطأ
+        function wrongAnswer() {
+            if (pressedQueue.length === 0) return;
+            const wrong = pressedQueue.shift();
+            alert(`❌ ${wrong.name} أخطأ في الإجابة`);
+            
+            if (pressedQueue.length > 0) {
+                alert(`الدور الآن على: ${pressedQueue[0].name}`);
+                refreshBuzzerList();
+            } else {
+                alert('لا يوجد متسابقون آخرون');
+                newRound();
+            }
+        }
+
+        // جولة جديدة
+        function newRound() {
+            pressedQueue = [];
+            refreshBuzzerList();
+            document.getElementById('questionBox').value = '';
+        }
+
+        // تحديث النقاط
+        function refreshScores() {
+            const sorted = [...allPlayers].sort((a,b) => allScores[b] - allScores[a]);
+            const box = document.getElementById('scoresBox');
+            box.innerHTML = sorted.map((p, i) => {
+                let medal = '';
+                if (i === 0 && allScores[p] > 0) medal = '🥇 ';
+                else if (i === 1 && allScores[p] > 0) medal = '🥈 ';
+                else if (i === 2 && allScores[p] > 0) medal = '🥉 ';
+                return `<div class="score-row"><span>${medal}${p}</span><span class="score-num">${allScores[p]}</span></div>`;
+            }).join('');
+        }
+
+        // تسجيل دخول المتسابق
+        function loginNow() {
+            const inp = document.getElementById('loginInput');
+            const name = inp.value.trim();
+            
+            if (!name) {
+                alert('⚠️ اكتب اسمك');
+                return;
+            }
+            
+            if (!allPlayers.includes(name)) {
+                alert('⚠️ اسمك غير موجود. تواصل مع المشرف');
+                return;
+            }
+            
+            loggedName = name;
+            document.getElementById('playerTitle').textContent = `👤 مرحباً ${name}`;
+            document.getElementById('myNameDisplay').textContent = name;
+            showScreen(5);
+            updateMyScore();
+        }
+
+        // ضغط الزر
+        function buzzNow() {
+            if (!isGameOn) {
+                alert('⚠️ اللعبة لم تبدأ');
+                return;
+            }
+            
+            if (pressedQueue.some(item => item.name === loggedName)) {
+                alert('⚠️ ضغطت مسبقاً');
+                return;
+            }
+            
+            const now = new Date();
+            const time = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+            
+            pressedQueue.push({ name: loggedName, time: time });
+            
+            const status = document.getElementById('playerStatus');
+            if (pressedQueue.length === 1) {
+                status.textContent = '🎉 أنت الأول! انتظر المشرف';
+                status.className = 'status-msg success';
+            } else {
+                status.textContent = `أنت رقم ${pressedQueue.length}`;
+                status.className = 'status-msg warning';
+            }
+            
+            document.getElementById('bigBuzzer').disabled = true;
+            refreshBuzzerList();
+        }
+
+        function updateMyScore() {
+            if (loggedName && allScores[loggedName] !== undefined) {
+                document.getElementById('myScoreDisplay').textContent = allScores[loggedName];
+            }
+        }
+
+        setInterval(updateMyScore, 1000);
+    </script>
+</body>
+</html>
