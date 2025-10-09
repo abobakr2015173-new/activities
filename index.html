@@ -3,138 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بطاقات المفردات التعليمية</title>
+    <title>فهرس الأنشطة التعليمية</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap');
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css');
+        /* === إعدادات عامة وخطوط === */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
         :root {
-            --bg-color: #F4F6F7;
-            --card-bg-color: #FFFFFF;
-            --primary-accent-color: #3498DB;
-            --text-color: #2C3E50;
+            --primary-color: #2c3e50; /* كحلي */
+            --secondary-color: #3498db; /* أزرق */
+            --background-color: #f4f6f9;
+            --card-background: #ffffff;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.1);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .app-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .flashcard-scene { width: 100%; height: calc(100vw * 0.7); max-height: 350px; perspective: 1000px; cursor: pointer; }
-        .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
-        .flashcard-inner.is-flipped { transform: rotateY(180deg); }
-        .flashcard-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; background-color: var(--card-bg-color); border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .flashcard-front { }
-        .flashcard-back { transform: rotateY(180deg); }
-        .flashcard-image { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 5px; }
-        .flashcard-word { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 700; }
-        .navigation-wrapper { 
-            display: flex; 
-            justify-content: center; /* توسيط المحتوى */
-            align-items: center; 
-            width: 100%; 
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
-        .nav-button { background-color: var(--primary-accent-color); color: var(--card-bg-color); border: none; width: 70px; /* تكبير الزر قليلاً */ height: 70px; border-radius: 50%; font-size: 1.8rem; cursor: pointer; transition: background-color 0.2s, transform 0.2s; display: flex; align-items: center; justify-content: center; }
-        .nav-button:hover { background-color: #2980b9; transform: scale(1.05); }
-        .progress-indicator { 
-            position: absolute; /* وضع المؤشر في الأعلى */
-            top: 20px;
-            font-size: 1.2rem; 
-            font-weight: 700; 
-            color: #7f8c8d; 
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 5px 15px;
-            border-radius: 20px;
+
+        /* === الهيدر والعنوان === */
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        /* === المحتوى الرئيسي === */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* === شريط البحث === */
+        .search-container {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        #searchInput {
+            width: 50%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 2px solid var(--light-gray);
+            font-size: 1rem;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+        }
+
+        /* === شبكة البطاقات === */
+        #activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1; /* يسمح للمحتوى بالتمدد */
+        }
+
+        .card-content h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+
+        .card-content p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .card-footer {
+            padding: 1rem 1.5rem;
+            background-color: #fafafa;
+            border-top: 1px solid var(--light-gray);
+            text-align: left;
+        }
+        
+        .card-link {
+            text-decoration: none;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .card-link:hover {
+            background-color: #2980b9;
+        }
+
+        /* === رسالة عدم العثور على نتائج === */
+        .no-results {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #888;
+            padding: 2rem;
+            grid-column: 1 / -1; /* تجعل الرسالة تمتد على عرض الشبكة بالكامل */
+        }
+
+        /* === تصميم متجاوب === */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            #searchInput {
+                width: 80%;
+            }
+            #activity-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="progress-indicator" id="progress-indicator"></div>
-        <div class="flashcard-scene" id="flashcard-scene">
-            <div class="flashcard-inner" id="flashcard-inner">
-                <div class="flashcard-face flashcard-front" id="flashcard-front">
-                    <img src="" alt="صورة البطاقة" class="flashcard-image">
-                </div>
-                <div class="flashcard-face flashcard-back" id="flashcard-back">
-                    <span class="flashcard-word"></span>
-                </div>
-            </div>
-        </div>
-        <div class="navigation-wrapper">
-            <button class="nav-button" id="next-btn" aria-label="التالي">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-        </div>
-    </div>
-    <script>
-    // ========================================================================
-    // ==                      قسم البيانات (المحتوى)                       ==
-    // ========================================================================
-    const flashcardsData = [
-      { id: 1, word: 'الضغط', image: 'images/pressure.jpg' },
-      { id: 2, word: 'الضغط مرتفع', image: 'images/high-pressure.jpg' },
-      { id: 3, word: 'مرتفع', image: 'images/high.jpg' },
-      { id: 4, word: 'منخفض', image: 'images/low.jpg' },
-      { id: 5, word: 'السكري', image: 'images/diabetes.jpg' },
-      { id: 6, word: 'النشويات', image: 'images/carbohydrates.jpg' },
-      { id: 7, word: 'السكريات', image: 'images/sugars.jpg' },
-      { id: 8, word: 'الحمية', image: 'images/diet.jpg' },
-      { id: 9, word: 'الدواء', image: 'images/medicine.jpg' }
-    ];
-    // ========================================================================
-    // ==                  لا تقم بتعديل أي شيء تحت هذا الخط                 ==
-    // ========================================================================
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const cardFront = document.getElementById('flashcard-front');
-        const cardBack = document.getElementById('flashcard-back');
-        const nextBtn = document.getElementById('next-btn');
-        const progressIndicator = document.getElementById('progress-indicator');
-        const flashcardInner = document.getElementById('flashcard-inner');
-        const flashcardScene = document.getElementById('flashcard-scene');
+    <header class="header">
+        <h1>فهرس الأنشطة التعليمية</h1>
+    </header>
 
-        const appState = {
-            currentIndex: 0,
-            totalCards: flashcardsData.length
-        };
+    <main class="container">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="ابحث عن نشاط تعليمي...">
+        </div>
+
+        <div id="activity-grid">
+            <!-- سيتم إدراج البطاقات هنا بواسطة JavaScript -->
+        </div>
         
-        function preloadImages() {
-            flashcardsData.forEach(card => {
-                const img = new Image();
-                img.src = card.image;
-            });
-        }
+    </main>
 
-        function displayCard() {
-            if (appState.totalCards === 0) {
-                progressIndicator.textContent = "لا توجد بطاقات";
-                cardBack.querySelector('.flashcard-word').textContent = "أضف بيانات";
+    <script>
+        // ==========================================================
+        //  بيانات الأنشطة التعليمية
+        //  يمكنك إضافة أو تعديل الأنشطة هنا بسهولة
+        // ==========================================================
+        const activities = [
+            {
+                title: "التوابع (النعت - العطف - التوكيد - البدل)",
+                description: "عرض تقديمي",
+                url: "https://abobakr2015173-new.github.io/activities/Twabi3.html"
+            }
+            // <-- لإضافة نشاط جديد، أضف فاصلة بعد القوس العلوي {}
+            // ثم انسخ والصق كتلة جديدة هنا بنفس التنسيق.
+            // مثال:
+            // ,
+            // {
+            //     title: "عنوان النشاط الثاني",
+            //     description: "وصف موجز للنشاط الثاني",
+            //     url: "https://... رابط النشاط الثاني"
+            // }
+        ];
+
+        // ==========================================================
+        //  الجزء الخاص بالوظائف والتفاعلية (لا داعي لتعديله)
+        // ==========================================================
+        const grid = document.getElementById('activity-grid');
+        const searchInput = document.getElementById('searchInput');
+
+        // دالة لإنشاء وعرض البطاقات
+        function displayActivities(activityList) {
+            grid.innerHTML = ''; // إفراغ الشبكة قبل عرض النتائج الجديدة
+
+            if (activityList.length === 0) {
+                grid.innerHTML = '<p class="no-results">عفواً، لم يتم العثور على نتائج تطابق بحثك.</p>';
                 return;
             }
 
-            const currentCardData = flashcardsData[appState.currentIndex];
-            
-            cardFront.querySelector('.flashcard-image').src = currentCardData.image;
-            cardFront.querySelector('.flashcard-image').alt = currentCardData.word;
-            cardBack.querySelector('.flashcard-word').textContent = currentCardData.word;
-            
-            progressIndicator.textContent = `البطاقة ${appState.currentIndex + 1} من ${appState.totalCards}`;
-            
-            flashcardInner.classList.remove('is-flipped');
-        }
-        
-        function showNextCard() {
-            appState.currentIndex = (appState.currentIndex + 1) % appState.totalCards;
-            displayCard();
+            activityList.forEach(activity => {
+                // إنشاء عنصر البطاقة
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                // تعبئة محتوى البطاقة
+                card.innerHTML = `
+                    <div class="card-content">
+                        <h3>${activity.title}</h3>
+                        <p>${activity.description}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="${activity.url}" class="card-link" target="_blank" rel="noopener noreferrer">اذهب للنشاط</a>
+                    </div>
+                `;
+
+                // إضافة البطاقة إلى الشبكة
+                grid.appendChild(card);
+            });
         }
 
-        function flipCard() {
-            flashcardInner.classList.toggle('is-flipped');
+        // دالة للبحث والتصفية
+        function filterActivities() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredActivities = activities.filter(activity => {
+                return activity.title.toLowerCase().includes(searchTerm) || 
+                       activity.description.toLowerCase().includes(searchTerm);
+            });
+            displayActivities(filteredActivities);
         }
 
-        nextBtn.addEventListener('click', showNextCard);
-        flashcardScene.addEventListener('click', flipCard);
+        // إضافة مستمع حدث لشريط البحث
+        searchInput.addEventListener('keyup', filterActivities);
 
-        preloadImages();
-        displayCard();
-    });
+        // عرض جميع الأنشطة عند تحميل الصفحة لأول مرة
+        displayActivities(activities);
     </script>
 </body>
 </html>
