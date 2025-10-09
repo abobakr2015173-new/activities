@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فهرس الأنشطة التعليمية</title>
+    <title>فهرس المحتوى التعليمي</title>
     <style>
         /* === إعدادات عامة وخطوط === */
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
@@ -155,12 +155,12 @@
 <body>
 
     <header class="header">
-        <h1>فهرس الأنشطة التعليمية</h1>
+        <h1>فهرس المحتوى التعليمي</h1>
     </header>
 
     <main class="container">
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="ابحث عن نشاط تعليمي...">
+            <input type="text" id="searchInput" placeholder="ابحث في المحتوى...">
         </div>
 
         <div id="activity-grid">
@@ -171,24 +171,22 @@
 
     <script>
         // ==========================================================
-        //  بيانات الأنشطة التعليمية
-        //  يمكنك إضافة أو تعديل الأنشطة هنا بسهولة
+        //  بيانات المحتوى التعليمي
+        //  يمكنك إضافة أو تعديل المحتوى هنا بسهولة
         // ==========================================================
         const activities = [
+            {
+                title: "لوحة المحكات الرقمية",
+                description: "لوحة محكات إلكترونية",
+                url: "https://abobakr2015173-new.github.io/activities/scoreboard.html"
+            },
             {
                 title: "التوابع (النعت - العطف - التوكيد - البدل)",
                 description: "عرض تقديمي",
                 url: "https://abobakr2015173-new.github.io/activities/Twabi3.html"
             }
-            // <-- لإضافة نشاط جديد، أضف فاصلة بعد القوس العلوي {}
+            // <-- لإضافة محتوى جديد، أضف فاصلة بعد القوس العلوي {}
             // ثم انسخ والصق كتلة جديدة هنا بنفس التنسيق.
-            // مثال:
-            // ,
-            // {
-            //     title: "عنوان النشاط الثاني",
-            //     description: "وصف موجز للنشاط الثاني",
-            //     url: "https://... رابط النشاط الثاني"
-            // }
         ];
 
         // ==========================================================
@@ -218,7 +216,7 @@
                         <p>${activity.description}</p>
                     </div>
                     <div class="card-footer">
-                        <a href="${activity.url}" class="card-link" target="_blank" rel="noopener noreferrer">اذهب للنشاط</a>
+                        <a href="${activity.url}" class="card-link" target="_blank" rel="noopener noreferrer">اذهب للمحتوى</a>
                     </div>
                 `;
 
